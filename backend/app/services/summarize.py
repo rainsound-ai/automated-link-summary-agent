@@ -3,12 +3,16 @@ from fastapi import HTTPException
 import os
 import logging
 from app.services.notion import (
+    upload_summaries_and_transcript_to_notion,
+    update_notion_title_for_summarized_item,
+    create_toggle_block,
     append_summary_to_notion,
-    update_notion_title_for_summarized_item
+    upload_transcript_to_notion
 )
 from app.models import Transcription
 from app.services.eval_agent import evaluate_section
 from app.services.get_openai_chat_response import get_openai_chat_response
+from app.services.prompt_manager import PromptManager
 # from tenacity import retry, stop_after_attempt, wait_exponential
 
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../'))
@@ -29,68 +33,52 @@ async def summarize_transcription(transcription: str, prompt: str) -> str:
         raise HTTPException(status_code=500, detail="Unexpected error during summarization")
 
 async def decomposed_summarize_transcription_and_upload_to_notion(
-        page_id, 
-        transcription: Transcription, 
-        toggle_id: str, 
-        link_or_meeting_database, 
-        is_llm_conversation, 
-        is_jumpshare_link, 
-        llm_conversation_file_name=None
-    ) -> None:
-
-    max_attempts = 5
-    quality_threshold = 0.8
-    best_summary = None
-    best_score = 0
-    feedback = ""
-
-    # prompt_file = "llm_conversation_summary_prompt.txt" if is_llm_conversation else "summary_prompt.txt"
-    prompt_file = (
-    "meeting_summary_prompt.txt" if is_jumpshare_link else
-    "llm_conversation_summary_prompt.txt" if is_llm_conversation else 
-    "summary_prompt.txt"
-    )
+    page_id, 
+    transcription: str,
+    toggle_id: str,
+    link_or_meeting_database,
+    is_llm_conversation,
+    is_jumpshare_link,
+    llm_conversation_file_name=None
+) -> None:
     
-    prompt_content = read_file(os.path.join(BASE_DIR, 'prompts', prompt_file))
-
-    for attempt in range(max_attempts):
-        try:
-            logger.info(f"💡 the prompt file being used is: {prompt_file}")
-            full_prompt = prompt_content + f"\n\nPrevious feedback:\n{feedback}"
-            logger.info(f"💡 Attempt {attempt + 1}")
-            
-            # Generate new summary
-            current_summary = await summarize_transcription(transcription, full_prompt)
-            
-            # Get fresh evaluation
-            evaluation = await evaluate_section(transcription, current_summary, is_llm_conversation, is_jumpshare_link)
-            current_score = evaluation['score']
-            
-            logger.info(f"💡 Score: {current_score}")
-            
-            # Update best if better
-            if current_score > best_score:
-                best_summary = current_summary
-                best_score = current_score
-                
-            # Update feedback for next iteration
-            feedback = f"Attempt {attempt + 1} feedback: {evaluation['feedback']}"
-            
-            if current_score >= quality_threshold:
-                logger.info("💡 Meets quality standards")
-                break
-                
-        except Exception as e:
-            logger.error(f"🚨 Attempt {attempt + 1} failed: {str(e)}")
-            if attempt == max_attempts - 1:
-                raise Exception(f"Failed after {max_attempts} attempts") from e
-            continue
-
-    if not best_summary:
-        raise Exception("Failed to generate valid summary")
-
-    # Upload best summary to Notion
-    await append_summary_to_notion(toggle_id, best_summary)
+    # Get all users from prompt folders
+    prompt_manager = PromptManager(BASE_DIR)
+    users = prompt_manager.get_available_users()
+    user_summaries = {}
+    user_toggle_ids = {}
+    best_score = 0
+    best_summary = None
+    
+    # Create one transcript toggle
+    transcript_toggle_id = await create_toggle_block(page_id, "Transcript", "orange")
+    
+    # For each user, create their summary toggle and generate summary
+    for user in users:
+        # Create toggle block for this user's summary
+        user_toggle_id = await create_toggle_block(page_id, f"{user.title()}'s Summary", "green")
+        user_toggle_ids[user] = user_toggle_id
+        
+        # Get user-specific prompt and generate summary
+        full_prompt = prompt_manager.get_prompt_for_user(user, is_llm_conversation, is_jumpshare_link)
+        current_summary = await summarize_transcription(transcription, full_prompt)
+        
+        # Store summary for this user
+        user_summaries[user] = current_summary
+        
+        # Evaluate summary if needed
+        evaluation = await evaluate_section(transcription, current_summary, is_llm_conversation, is_jumpshare_link, user)
+        
+        # Track best summary based on evaluation score
+        if evaluation and evaluation.get('score', 0) > best_score:
+            best_score = evaluation.get('score', 0)
+            best_summary = current_summary
+        
+        # Upload this user's summary to their toggle
+        await append_summary_to_notion(user_toggle_id, current_summary)
+    
+    # Upload transcript to transcript toggle
+    await upload_transcript_to_notion(transcript_toggle_id, transcription)
 
     if llm_conversation_file_name:
         formatted_name = llm_conversation_file_name.replace(".html", " ")
@@ -98,7 +86,6 @@ async def decomposed_summarize_transcription_and_upload_to_notion(
             page_id, 
             f"LLM Conversation: {formatted_name}"
         )
-
     else:
         if link_or_meeting_database=="link_database":
             # get the first line from the best summary

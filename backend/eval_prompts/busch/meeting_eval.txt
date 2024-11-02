@@ -1,0 +1,183 @@
+        ---
+
+        **Evaluation Agent Prompt**
+
+        **Task:**
+
+        Evaluate the following summary of a meeting transcript by assessing its adherence to the extraction, topic organization, and formatting guidelines based on the instructions provided to the **Summary Agent**.
+
+        **Inputs:**
+
+        - **Original Transcript:**
+
+        BEGINNING OF ORIGINAL TRANSCRIPT
+        ```
+        {original_transcript}
+        ```
+        END OF ORIGINAL TRANSCRIPT
+
+        - **Summary to Evaluate:**
+
+        BEGINNING OF SUMMARY TO EVALUATE
+        ```
+        {summary_to_evaluate}
+        ```
+        END OF SUMMARY TO EVALUATE
+
+        **Instructions:**
+
+        ### 1. Understand the Content:
+
+        - **Thorough Review:**
+        - Carefully read the entire **Original Transcript** to fully grasp the key information, topics, and context related to the meeting.
+
+        ### 2. Evaluate the Summary:
+
+        - **Alignment with Instructions:**
+        - Assess how well the **Summary to Evaluate** aligns with the **Summary Agent's** instructions.
+        - Focus on topic identification, organization, and inclusion of crucial information.
+        - Do not use any external references or gold standard summaries for comparison. Base your evaluation solely on the **Original Transcript** and the **Summary to Evaluate**.
+
+        ### 3. Scoring Criteria:
+
+        Evaluate the summary based on the following **eleven** criteria. For each criterion, determine whether the summary meets the standard (**Yes**) or does not (**No**). Provide specific comments to justify your assessment.
+
+        1. **Inclusion of Meeting Purpose and Participants:**
+        - **Criteria:**
+            - The introductory paragraph includes the meeting's purpose.
+            - The main participants and their roles are clearly stated.
+        - **Assessment:** Does the summary include the meeting's purpose and key participants?
+        - **Comment:**
+
+        2. **Listing of Main Topics in Introductory Paragraph:**
+        - **Criteria:**
+            - All main topics discussed in the meeting are listed in the introductory paragraph.
+        - **Assessment:** Are all main topics listed?
+        - **Comment:**
+
+        3. **Topic Identification and Organization:**
+        - **Criteria:**
+            - Topics are correctly identified and organized into separate sections with appropriate headings.
+        - **Assessment:** Are the topics correctly identified and organized?
+        - **Comment:**
+
+        4. **Format Adherence:**
+        - **Criteria:**
+            - The summary follows the specified formatting, including:
+            - An H1 tag for the title.
+            - Introductory paragraph placed immediately after the title.
+            - H2 headings for each topic name.
+            - Under each topic, H3 headings for each category name.
+            - Bullet points with concise summaries under each category.
+            - There is only one section per category under each topic without duplication.
+        - **Assessment:** Does the summary strictly follow the specified formatting?
+        - **Comment:**
+
+        5. **Correct Categorization within Topics:**
+        - **Criteria:**
+            - Each instance is correctly categorized under **Action Items**, **Decisions Made**, **Key Topics and Themes**, **Issues and Problems Identified**, or **Questions Raised** based on the definitions provided.
+        - **Assessment:** Are all instances accurately categorized?
+        - **Comment:**
+
+        6. **Handling of Quotes:**
+        - **Criteria:**
+            - Quotes are cleaned up for readability by removing filler words, repetitions, and correcting grammar, punctuation, and capitalization.
+            - The original intent and meaning of the quotes are preserved.
+        - **Assessment:** Are the quotes properly cleaned up without altering their meaning?
+        - **Comment:**
+
+        7. **Determination and Prioritization of Key Information:**
+        - **Criteria:**
+            - The summarizer has effectively identified and prioritized the most important information based on the meeting's purpose and topics.
+            - The summary focuses on what the intended audience would find most valuable.
+        - **Assessment:** Has the summarizer effectively identified and prioritized key information?
+        - **Comment:**
+
+        8. **Conciseness:**
+        - **Criteria:**
+            - Summaries are concise, focusing solely on essential information without unnecessary verbosity.
+        - **Assessment:** Is the summary brief and to the point?
+        - **Comment:**
+
+        9. **Accuracy:**
+        - **Criteria:**
+            - No information is included that is not present in the transcript.
+            - Summaries accurately reflect the content of the transcript without embellishment or interpretation beyond cleaning up quotes.
+        - **Assessment:** Is the summary free from inaccuracies and extraneous information?
+        - **Comment:**
+
+        10. **Completeness:**
+            - **Criteria:**
+            - All relevant instances within each category present in the transcript are included in the summary.
+            - No critical information from the transcript is omitted.
+            - **Assessment:** Does the summary cover all necessary instances without omitting key information?
+            - **Comment:**
+
+        11. **Clarity:**
+            - **Criteria:**
+            - The summary is written in clear, precise language.
+            - Technical terms are used appropriately without overuse of jargon.
+            - **Assessment:** Is the summary clear and easy to understand?
+            - **Comment:**
+
+        ### 4. Scoring Framework:
+
+        - **Score Calculation:**
+        - Each criterion is worth up to **1 point**.
+        - **Total Possible Score:** 11 points.
+        - **Final Score:** Sum of points awarded divided by 11, resulting in a score between 0 and 1, rounded to two decimal places.
+
+        - **An Example of How to Score:**
+        - If a summary meets 9 out of the 11 criteria, the score would be **9/11 ≈ 0.82**.
+
+        ### 5. Provide Your Evaluation in the Following Format:
+
+        ```
+        Score: [A single number between 0 and 1, rounded to two decimal places]
+        Feedback:
+        1. **Inclusion of Meeting Purpose and Participants:** [Yes/No] - [Comment]
+        2. **Listing of Main Topics in Introductory Paragraph:** [Yes/No] - [Comment]
+        3. **Topic Identification and Organization:** [Yes/No] - [Comment]
+        4. **Format Adherence:** [Yes/No] - [Comment]
+        5. **Correct Categorization within Topics:** [Yes/No] - [Comment]
+        6. **Handling of Quotes:** [Yes/No] - [Comment]
+        7. **Determination and Prioritization of Key Information:** [Yes/No] - [Comment]
+        8. **Conciseness:** [Yes/No] - [Comment]
+        9. **Accuracy:** [Yes/No] - [Comment]
+        10. **Completeness:** [Yes/No] - [Comment]
+        11. **Clarity:** [Yes/No] - [Comment]
+        ```
+
+        ---
+
+        **Important Instructions:**
+
+        - **Accuracy:**
+        - **Do not include any information not present in the transcript.**
+        - **Avoid paraphrasing or interpreting the content beyond assessing the cleaned-up quotes.**
+
+        - **Handling of Quotes:**
+        - **Permitted Edits:**
+            - Acknowledge that quotes may be cleaned up for readability as per the guidelines.
+        - **Prohibited Changes:**
+            - The meaning or intent of the quotes must not be altered.
+
+        - **Format Adherence:**
+        - **Strictly follow the specified formatting with appropriate headings and bullet points.**
+        - **Ensure the introductory paragraph is included immediately after the title.**
+        - **Do not repeat sections; there should only ever be one section per category under each topic.**
+
+        - **Determination and Prioritization of Key Information:**
+        - **Evaluate whether the summarizer has effectively identified and focused on the most important information based on the meeting's purpose and topics.**
+
+        - **Conciseness:**
+        - **Keep feedback concise to ensure it is easily digestible and fits within any system limitations.**
+
+        - **Completeness:**
+        - **Ensure all relevant instances from the transcript are considered in the evaluation without omitting key information.**
+
+        - **Clarity:**
+        - **Ensure your feedback is written in clear, precise language suitable for an expert audience.**
+        - **Use technical terms appropriately without overusing jargon.**
+
+        ---

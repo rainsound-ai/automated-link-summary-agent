@@ -363,3 +363,52 @@ async def update_notion_title_for_summarized_item(page_id, llm_conversation_file
                 logger.error(f"Notion API Error: {response.status}")
                 logger.error(f"Response body: {text}")
             # await response.raise_for_status()
+
+async def upload_summaries_and_transcript_to_notion(
+    page_id: str,
+    transcription: str,
+    summary: str,
+    evaluation: dict,
+    transcript_toggle_id: str,
+    summary_toggle_id: str,
+    user_summaries: dict
+) -> None:
+    """Upload multiple summaries and transcript to Notion"""
+    
+    blocks = []
+    
+    # Add each user's summary with their name as header
+    for user, summary in user_summaries.items():
+        blocks.extend([
+            {
+                "type": "heading_2",
+                "heading_2": {
+                    "rich_text": [{"type": "text", "text": {"content": f"{user.title()} Summary"}}]
+                }
+            },
+            {
+                "type": "paragraph",
+                "paragraph": {
+                    "rich_text": parse_rich_text(summary)
+                }
+            }
+        ])
+    
+    # Add transcript
+    blocks.extend([
+        {
+            "type": "heading_2",
+            "heading_2": {
+                "rich_text": [{"type": "text", "text": {"content": "Transcript"}}]
+            }
+        },
+        {
+            "type": "paragraph",
+            "paragraph": {
+                "rich_text": parse_rich_text(transcription)
+            }
+        }
+    ])
+    
+    # Upload to Notion
+    await safe_append_blocks_to_notion(page_id, blocks)

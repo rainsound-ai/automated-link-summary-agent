@@ -19,7 +19,7 @@ class PromptManager:
         prompt_file = (
             "meeting_summary_prompt.txt" if is_jumpshare_link else
             "llm_conversation_summary_prompt.txt" if is_llm_conversation else 
-            "summary_prompt.txt"
+            "text_summary_prompt.txt"
         )
         
         prompt_path = os.path.join(self.prompts_dir, user, prompt_file)
@@ -35,7 +35,7 @@ class PromptManager:
         eval_file = (
             "meeting_eval.txt" if is_jumpshare_link else
             "llm_conversation_eval.txt" if is_llm_conversation else 
-            "general_eval.txt"
+            "text_summary_eval.txt"
         )
         
         eval_path = os.path.join(self.eval_prompts_dir, user, eval_file)

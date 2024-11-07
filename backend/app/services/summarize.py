@@ -42,6 +42,11 @@ async def decomposed_summarize_transcription_and_upload_to_notion(
     llm_conversation_file_name=None
 ) -> None:
     
+    # Configuration
+    max_attempts = 5
+    quality_threshold = 0.8
+    feedback = ""
+    
     # Get all users from prompt folders
     prompt_manager = PromptManager(BASE_DIR)
     users = prompt_manager.get_available_users()
@@ -56,27 +61,54 @@ async def decomposed_summarize_transcription_and_upload_to_notion(
         user_toggle_id = await create_toggle_block(page_id, f"{user.title()}'s Summary", "green")
         user_toggle_ids[user] = user_toggle_id
         
-        # Get user-specific prompt and generate summary
-        full_prompt = prompt_manager.get_prompt_for_user(user, is_llm_conversation, is_jumpshare_link)
-        current_summary = await summarize_transcription(transcription, full_prompt)
+        # Try multiple attempts for each user if needed
+        for attempt in range(max_attempts):
+            try:
+                logger.info(f"💡 Attempt {attempt + 1} for user {user}")
+                
+                # Get user-specific prompt and add feedback if any
+                full_prompt = prompt_manager.get_prompt_for_user(user, is_llm_conversation, is_jumpshare_link)
+                if feedback:
+                    full_prompt += f"\n\nPrevious feedback:\n{feedback}"
+                
+                # Generate summary
+                current_summary = await summarize_transcription(transcription, full_prompt)
+                
+                # Evaluate summary
+                evaluation = await evaluate_section(transcription, current_summary, is_llm_conversation, is_jumpshare_link, user)
+                current_score = evaluation.get('score', 0)
+                
+                logger.info(f"💡 Score for {user}: {current_score}")
+                
+                # Update best if better
+                if current_score > best_score:
+                    best_score = current_score
+                    best_summary = current_summary
+                
+                # Store summary for this user
+                user_summaries[user] = current_summary
+                
+                # Update feedback for next attempt
+                feedback = f"Attempt {attempt + 1} feedback: {evaluation['feedback']}"
+                
+                # Break if meets quality threshold
+                if current_score >= quality_threshold:
+                    logger.info(f"💡 User {user}'s summary meets quality standards")
+                    break
+                    
+            except Exception as e:
+                logger.error(f"🚨 Attempt {attempt + 1} for user {user} failed: {str(e)}")
+                if attempt == max_attempts - 1:
+                    logger.error(f"Failed after {max_attempts} attempts for user {user}")
+                continue
         
-        # Store summary for this user
-        user_summaries[user] = current_summary
-        
-        # Evaluate summary if needed
-        evaluation = await evaluate_section(transcription, current_summary, is_llm_conversation, is_jumpshare_link, user)
-        
-        # Track best summary based on evaluation score
-        if evaluation and evaluation.get('score', 0) > best_score:
-            best_score = evaluation.get('score', 0)
-            best_summary = current_summary
-        
-        # Upload this user's summary to their toggle
-        await append_summary_to_notion(user_toggle_id, current_summary)
+        # Upload this user's best summary to their toggle
+        await append_summary_to_notion(user_toggle_id, user_summaries[user])
     
     # Upload transcript to transcript toggle
     await append_summary_to_notion(transcript_toggle_id, transcription)
 
+    # Update page title based on content type
     if llm_conversation_file_name:
         formatted_name = llm_conversation_file_name.replace(".html", " ")
         await update_notion_title_for_summarized_item(
@@ -85,7 +117,6 @@ async def decomposed_summarize_transcription_and_upload_to_notion(
         )
     else:
         if link_or_meeting_database=="link_database":
-            # get the first line from the best summary
             title = best_summary.split("\n")[0].replace("# ", "")
             await update_notion_title_for_summarized_item(page_id, title)
 

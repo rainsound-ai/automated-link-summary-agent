@@ -1,183 +1,184 @@
-        ---
+Certainly! Here's the updated prompt matching how the old eval agent prompt is handling feedback:
 
-        **Evaluation Agent Prompt**
+---
 
-        **Task:**
+**Evaluation Agent Prompt**
 
-        Evaluate the following summary of a meeting transcript by assessing its adherence to the extraction, topic organization, and formatting guidelines based on the instructions provided to the **Summary Agent**.
+**Task:**
 
-        **Inputs:**
+Evaluate the following summary of a meeting transcript by assessing its adherence to the extraction, selection, and formatting guidelines based on the instructions provided to the **Summary Agent**.
 
-        - **Original Transcript:**
+**Inputs:**
 
-        BEGINNING OF ORIGINAL TRANSCRIPT
-        ```
-        {original_transcript}
-        ```
-        END OF ORIGINAL TRANSCRIPT
+- **Original Transcript:**
 
-        - **Summary to Evaluate:**
+BEGINNING OF ORIGINAL TRANSCRIPT
+```
+{original_transcript}
+```
+END OF ORIGINAL TRANSCRIPT
 
-        BEGINNING OF SUMMARY TO EVALUATE
-        ```
-        {summary_to_evaluate}
-        ```
-        END OF SUMMARY TO EVALUATE
+- **Summary to Evaluate:**
 
-        **Instructions:**
+BEGINNING OF SUMMARY TO EVALUATE
+```
+{summary_to_evaluate}
+```
+END OF SUMMARY TO EVALUATE
 
-        ### 1. Understand the Content:
+---
 
-        - **Thorough Review:**
-        - Carefully read the entire **Original Transcript** to fully grasp the key information, topics, and context related to the meeting.
+**Instructions:**
 
-        ### 2. Evaluate the Summary:
+### 1. Understand the Content:
 
-        - **Alignment with Instructions:**
-        - Assess how well the **Summary to Evaluate** aligns with the **Summary Agent's** instructions.
-        - Focus on topic identification, organization, and inclusion of crucial information.
-        - Do not use any external references or gold standard summaries for comparison. Base your evaluation solely on the **Original Transcript** and the **Summary to Evaluate**.
+- **Thorough Review:**
+  - Carefully read the entire **Original Transcript** to fully grasp the key information, topics, and context discussed during the meeting.
 
-        ### 3. Scoring Criteria:
+### 2. Evaluate the Summary:
 
-        Evaluate the summary based on the following **eleven** criteria. For each criterion, determine whether the summary meets the standard (**Yes**) or does not (**No**). Provide specific comments to justify your assessment.
+- **Alignment with Instructions:**
+  - Assess how well the **Summary to Evaluate** aligns with the **Summary Agent's** instructions.
+  - Focus on the accurate extraction of information, proper formatting, and adherence to the criteria specified for each section: **Intro**, **Direct Quotes**, and **Next Actions**.
+  - Base your evaluation solely on the **Original Transcript** and the **Summary to Evaluate**. Do not reference or include any part of these instructions in your evaluation.
 
-        1. **Inclusion of Meeting Purpose and Participants:**
-        - **Criteria:**
-            - The introductory paragraph includes the meeting's purpose.
-            - The main participants and their roles are clearly stated.
-        - **Assessment:** Does the summary include the meeting's purpose and key participants?
-        - **Comment:**
+### 3. Scoring Criteria:
 
-        2. **Listing of Main Topics in Introductory Paragraph:**
-        - **Criteria:**
-            - All main topics discussed in the meeting are listed in the introductory paragraph.
-        - **Assessment:** Are all main topics listed?
-        - **Comment:**
+Evaluate the summary based on the following eleven criteria. For each criterion, determine whether the summary meets the standard (**Yes**) or does not (**No**). Provide specific comments to justify your assessment.
 
-        3. **Topic Identification and Organization:**
-        - **Criteria:**
-            - Topics are correctly identified and organized into separate sections with appropriate headings.
-        - **Assessment:** Are the topics correctly identified and organized?
-        - **Comment:**
+1. **Section Heading and Formatting for "Intro":**
+   - **Criteria:**
+     - The summary begins with the heading "Intro."
+     - The "Intro" is presented as a single paragraph under the heading.
+   - **Assessment:** Is the "Intro" section properly formatted with the correct heading and paragraph structure?
+   - **Comment:**
 
-        4. **Format Adherence:**
-        - **Criteria:**
-            - The summary follows the specified formatting, including:
-            - An H1 tag for the title.
-            - Introductory paragraph placed immediately after the title.
-            - H2 headings for each topic name.
-            - Under each topic, H3 headings for each category name.
-            - Bullet points with concise summaries under each category.
-            - There is only one section per category under each topic without duplication.
-        - **Assessment:** Does the summary strictly follow the specified formatting?
-        - **Comment:**
+2. **Conciseness and Clarity of "Intro":**
+   - **Criteria:**
+     - The "Intro" section is no more than three sentences.
+     - The language is clear and easily understandable for someone unfamiliar with the transcript.
+   - **Assessment:** Is the "Intro" concise and clear?
+   - **Comment:**
 
-        5. **Correct Categorization within Topics:**
-        - **Criteria:**
-            - Each instance is correctly categorized under **Action Items**, **Decisions Made**, **Key Topics and Themes**, **Issues and Problems Identified**, or **Questions Raised** based on the definitions provided.
-        - **Assessment:** Are all instances accurately categorized?
-        - **Comment:**
+3. **Inclusion of Meeting Purpose in "Intro":**
+   - **Criteria:**
+     - The main goal or purpose of the meeting is clearly stated in the "Intro."
+   - **Assessment:** Does the "Intro" include the meeting's purpose?
+   - **Comment:**
 
-        6. **Handling of Quotes:**
-        - **Criteria:**
-            - Quotes are cleaned up for readability by removing filler words, repetitions, and correcting grammar, punctuation, and capitalization.
-            - The original intent and meaning of the quotes are preserved.
-        - **Assessment:** Are the quotes properly cleaned up without altering their meaning?
-        - **Comment:**
+4. **Highlighting High-Impact Topics in "Intro":**
+   - **Criteria:**
+     - Up to three high-impact topics are identified and summarized.
+     - If more than three topics are included, it's noted as an edge case.
+   - **Assessment:** Are the high-impact topics appropriately highlighted?
+   - **Comment:**
 
-        7. **Determination and Prioritization of Key Information:**
-        - **Criteria:**
-            - The summarizer has effectively identified and prioritized the most important information based on the meeting's purpose and topics.
-            - The summary focuses on what the intended audience would find most valuable.
-        - **Assessment:** Has the summarizer effectively identified and prioritized key information?
-        - **Comment:**
+5. **Inclusion of Relevant Context in "Intro":**
+   - **Criteria:**
+     - The "Intro" includes pertinent background information, such as partnerships or strategic priorities.
+   - **Assessment:** Does the "Intro" provide relevant context?
+   - **Comment:**
 
-        8. **Conciseness:**
-        - **Criteria:**
-            - Summaries are concise, focusing solely on essential information without unnecessary verbosity.
-        - **Assessment:** Is the summary brief and to the point?
-        - **Comment:**
+6. **Section Heading and Formatting for "Direct Quotes":**
+   - **Criteria:**
+     - The summary includes the heading "Direct Quotes."
+     - Each quote is presented within quotation marks without speaker attribution.
+   - **Assessment:** Is the "Direct Quotes" section properly formatted?
+   - **Comment:**
 
-        9. **Accuracy:**
-        - **Criteria:**
-            - No information is included that is not present in the transcript.
-            - Summaries accurately reflect the content of the transcript without embellishment or interpretation beyond cleaning up quotes.
-        - **Assessment:** Is the summary free from inaccuracies and extraneous information?
-        - **Comment:**
+7. **Selection of High-Impact Direct Quotes:**
+   - **Criteria:**
+     - Up to three impactful and relevant quotes are extracted verbatim from the transcript.
+     - Quotes offer unique insights and are not repetitive.
+     - If no relevant quotes are identified, the section states "**No relevant quotes identified.**"
+   - **Assessment:** Are the selected quotes appropriate and correctly presented?
+   - **Comment:**
 
-        10. **Completeness:**
-            - **Criteria:**
-            - All relevant instances within each category present in the transcript are included in the summary.
-            - No critical information from the transcript is omitted.
-            - **Assessment:** Does the summary cover all necessary instances without omitting key information?
-            - **Comment:**
+8. **Section Heading and Formatting for "Next Actions":**
+   - **Criteria:**
+     - The summary includes the heading "Next Actions."
+     - Each action item is presented in bold as a title, followed by a concise description.
+   - **Assessment:** Is the "Next Actions" section properly formatted?
+   - **Comment:**
 
-        11. **Clarity:**
-            - **Criteria:**
-            - The summary is written in clear, precise language.
-            - Technical terms are used appropriately without overuse of jargon.
-            - **Assessment:** Is the summary clear and easy to understand?
-            - **Comment:**
+9. **Identification of Action Items:**
+   - **Criteria:**
+     - Action items are directly extracted from the transcript without inference.
+     - Up to three high-impact actions are included.
+     - If no actions are identified, the section states "**No next actions identified.**"
+   - **Assessment:** Are the action items accurately identified and described?
+   - **Comment:**
 
-        ### 4. Scoring Framework:
+10. **Exclusion of Disallowed Content:**
+    - **Criteria:**
+      - The summary avoids hallucinations and does not include tasks not present in the transcript.
+      - No speaker attribution is made unless explicitly mentioned.
+    - **Assessment:** Is the summary free from disallowed content?
+    - **Comment:**
 
-        - **Score Calculation:**
-        - Each criterion is worth up to **1 point**.
-        - **Total Possible Score:** 11 points.
-        - **Final Score:** Sum of points awarded divided by 11, resulting in a score between 0 and 1, rounded to two decimal places.
+11. **Adherence to Character Limits:**
+    - **Criteria:**
+      - The "Direct Quotes" and "Next Actions" sections do not exceed 2000 characters each.
+    - **Assessment:** Are the character limits respected?
+    - **Comment:**
 
-        - **An Example of How to Score:**
-        - If a summary meets 9 out of the 11 criteria, the score would be **9/11 ≈ 0.82**.
+### 4. Scoring Framework:
 
-        ### 5. Provide Your Evaluation in the Following Format:
+- **Score Calculation:**
+  - Each criterion is worth up to **1 point**.
+  - **Total Possible Score:** 11 points.
+  - **Final Score:** Sum of points awarded divided by 11, resulting in a score between 0 and 1, rounded to two decimal places.
 
-        ```
-        Score: [A single number between 0 and 1, rounded to two decimal places]
-        Feedback:
-        1. **Inclusion of Meeting Purpose and Participants:** [Yes/No] - [Comment]
-        2. **Listing of Main Topics in Introductory Paragraph:** [Yes/No] - [Comment]
-        3. **Topic Identification and Organization:** [Yes/No] - [Comment]
-        4. **Format Adherence:** [Yes/No] - [Comment]
-        5. **Correct Categorization within Topics:** [Yes/No] - [Comment]
-        6. **Handling of Quotes:** [Yes/No] - [Comment]
-        7. **Determination and Prioritization of Key Information:** [Yes/No] - [Comment]
-        8. **Conciseness:** [Yes/No] - [Comment]
-        9. **Accuracy:** [Yes/No] - [Comment]
-        10. **Completeness:** [Yes/No] - [Comment]
-        11. **Clarity:** [Yes/No] - [Comment]
-        ```
+- **Example:**
+  - If a summary meets 9 out of the 11 criteria, the score would be **9/11 ≈ 0.82**.
 
-        ---
+### 5. Provide Your Evaluation in the Following Format:
 
-        **Important Instructions:**
+```
+Score: [A single number between 0 and 1, rounded to two decimal places]
+Feedback:
+1. **Section Heading and Formatting for "Intro":** [Yes/No] - [Comment]
+2. **Conciseness and Clarity of "Intro":** [Yes/No] - [Comment]
+3. **Inclusion of Meeting Purpose in "Intro":** [Yes/No] - [Comment]
+4. **Highlighting High-Impact Topics in "Intro":** [Yes/No] - [Comment]
+5. **Inclusion of Relevant Context in "Intro":** [Yes/No] - [Comment]
+6. **Section Heading and Formatting for "Direct Quotes":** [Yes/No] - [Comment]
+7. **Selection of High-Impact Direct Quotes:** [Yes/No] - [Comment]
+8. **Section Heading and Formatting for "Next Actions":** [Yes/No] - [Comment]
+9. **Identification of Action Items:** [Yes/No] - [Comment]
+10. **Exclusion of Disallowed Content:** [Yes/No] - [Comment]
+11. **Adherence to Character Limits:** [Yes/No] - [Comment]
+```
 
-        - **Accuracy:**
-        - **Do not include any information not present in the transcript.**
-        - **Avoid paraphrasing or interpreting the content beyond assessing the cleaned-up quotes.**
+---
 
-        - **Handling of Quotes:**
-        - **Permitted Edits:**
-            - Acknowledge that quotes may be cleaned up for readability as per the guidelines.
-        - **Prohibited Changes:**
-            - The meaning or intent of the quotes must not be altered.
+**Important Instructions:**
 
-        - **Format Adherence:**
-        - **Strictly follow the specified formatting with appropriate headings and bullet points.**
-        - **Ensure the introductory paragraph is included immediately after the title.**
-        - **Do not repeat sections; there should only ever be one section per category under each topic.**
+- **Exclusive Source:**
+  - Only use information from the **Original Transcript** and the **Summary to Evaluate**.
+  - Do not reference or include any part of these instructions in your evaluation.
 
-        - **Determination and Prioritization of Key Information:**
-        - **Evaluate whether the summarizer has effectively identified and focused on the most important information based on the meeting's purpose and topics.**
+- **Accuracy:**
+  - Do not include any information not present in the transcript.
+  - Avoid paraphrasing or interpreting the content beyond assessing adherence to the guidelines.
 
-        - **Conciseness:**
-        - **Keep feedback concise to ensure it is easily digestible and fits within any system limitations.**
+- **Handling of Quotes:**
+  - Quotes must be verbatim from the transcript.
+  - Do not alter the meaning or intent of the quotes.
 
-        - **Completeness:**
-        - **Ensure all relevant instances from the transcript are considered in the evaluation without omitting key information.**
+- **Format Adherence:**
+  - Strictly assess whether the summary follows the specified formatting with correct headings and structures.
+  - Ensure sections are presented in the correct order and format.
 
-        - **Clarity:**
-        - **Ensure your feedback is written in clear, precise language suitable for an expert audience.**
-        - **Use technical terms appropriately without overusing jargon.**
+- **Avoid Hallucinations:**
+  - Do not consider any tasks or content that are not explicitly mentioned in the transcript.
 
-        ---
+- **Conciseness:**
+  - Keep feedback concise to ensure it is easily digestible.
+
+- **Completeness:**
+  - Ensure all relevant aspects from the transcript are considered in the evaluation without omitting key points.
+
+- **Clarity:**
+  - Write your feedback in clear, precise language suitable for an expert audience.
+  - Use technical terms appropriately without overusing jargon.

@@ -24,15 +24,15 @@ PROMPT_CONFIGS = {
         media_types={
             MediaType.LLM_CONVERSATION: PromptConfig(
                 summary_prompt="llm_conversation_summary_prompt.txt",
-                evaluation_prompt="llm_conversation_eval_prompt.txt"
+                evaluation_prompt="llm_conversation_eval.txt"
             ),
             MediaType.MEETING: PromptConfig(
                 summary_prompt="meeting_summary_prompt.txt",
-                evaluation_prompt="meeting_eval_prompt.txt"
+                evaluation_prompt="meeting_eval.txt"
             ),
             MediaType.GENERAL_LINK: PromptConfig(
-                summary_prompt="summary_prompt.txt",
-                evaluation_prompt="general_eval_prompt.txt"
+                summary_prompt="text_summary_prompt.txt",
+                evaluation_prompt="text_summary_eval.txt"
             )
         }
     ),
@@ -40,10 +40,17 @@ PROMPT_CONFIGS = {
         name="miles",
         media_types={
             MediaType.LLM_CONVERSATION: PromptConfig(
-                summary_prompt="miles_llm_conversation_prompt.txt",
-                evaluation_prompt="miles_llm_eval_prompt.txt"
+                summary_prompt="llm_conversation_summary_prompt.txt",
+                evaluation_prompt="llm_conversation_eval.txt"
             ),
-            # ... other configs for Miles
+            MediaType.MEETING: PromptConfig(
+                summary_prompt="meeting_summary_prompt.txt",
+                evaluation_prompt="meeting_eval.txt"
+            ),
+            MediaType.GENERAL_LINK: PromptConfig(
+                summary_prompt="text_summary_prompt.txt",
+                evaluation_prompt="text_summary_eval.txt"
+            )
         }
     )
 } 

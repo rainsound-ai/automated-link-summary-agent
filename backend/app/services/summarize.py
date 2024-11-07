@@ -35,7 +35,7 @@ async def summarize_transcription(transcription: str, prompt: str) -> str:
 async def decomposed_summarize_transcription_and_upload_to_notion(
     page_id, 
     transcription: str,
-    toggle_id: str,
+    transcript_toggle_id: str,
     link_or_meeting_database,
     is_llm_conversation,
     is_jumpshare_link,
@@ -49,9 +49,6 @@ async def decomposed_summarize_transcription_and_upload_to_notion(
     user_toggle_ids = {}
     best_score = 0
     best_summary = None
-    
-    # Create one transcript toggle
-    transcript_toggle_id = await create_toggle_block(page_id, "Transcript", "orange")
     
     # For each user, create their summary toggle and generate summary
     for user in users:
@@ -78,7 +75,7 @@ async def decomposed_summarize_transcription_and_upload_to_notion(
         await append_summary_to_notion(user_toggle_id, current_summary)
     
     # Upload transcript to transcript toggle
-    await upload_transcript_to_notion(transcript_toggle_id, transcription)
+    await append_summary_to_notion(transcript_toggle_id, transcription)
 
     if llm_conversation_file_name:
         formatted_name = llm_conversation_file_name.replace(".html", " ")

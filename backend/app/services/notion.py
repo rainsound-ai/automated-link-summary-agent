@@ -154,13 +154,16 @@ async def safe_append_blocks_to_notion(toggle_id: str, blocks: List[NotionBlock]
 
 
 async def append_summary_to_notion(toggle_id: str, section_content: str) -> None:
-    blocks: List[NotionBlock] = convert_content_to_blocks(section_content)
+    # First chunk the content
+    content_chunks = chunk_text_with_2000_char_limit_for_notion(section_content)
     try:
-        await safe_append_blocks_to_notion(toggle_id, blocks)
+        for chunk in content_chunks:
+            blocks: List[NotionBlock] = convert_content_to_blocks(chunk)
+            await safe_append_blocks_to_notion(toggle_id, blocks)
     except Exception as e:
         logger.error(f"🚨 Failed to append summary to Notion: {str(e)}")
         logger.error(f"Toggle ID: {toggle_id}")
-        logger.error(f"Blocks count: {len(blocks)}")
+        logger.error(f"Content length: {len(section_content)}")
         raise HTTPException(
             status_code=500, 
             detail=f"Failed to append summary to Notion: {str(e)}"

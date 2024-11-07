@@ -106,11 +106,7 @@ async def process_link(item_to_process):
                 raise ValueError("Failed to generate transcription")
 
             logger.debug("Creating toggle blocks")
-            # Create toggle blocks once
-            summary_toggle_id = await create_toggle_block(page_id, "Summary", "green")
-            if not summary_toggle_id:
-                raise ValueError("Failed to create summary toggle block")
-                
+            # Only create transcript toggle
             transcript_toggle_id = await create_toggle_block(page_id, "Transcript", "orange")
             if not transcript_toggle_id:
                 raise ValueError("Failed to create transcript toggle block")
@@ -120,12 +116,13 @@ async def process_link(item_to_process):
             await decomposed_summarize_transcription_and_upload_to_notion(
                 page_id, 
                 transcription, 
-                summary_toggle_id, 
+                transcript_toggle_id,
                 link_or_meeting_database, 
                 is_llm_conversation, 
                 is_jumpshare_link, 
                 llm_conversation_file_name
             )
+            # Add this line back
             await upload_transcript_to_notion(transcript_toggle_id, transcription)
             
             logger.debug("Successfully completed processing")

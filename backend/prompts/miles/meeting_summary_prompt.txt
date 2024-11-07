@@ -1,0 +1,173 @@
+**Task**: Using the provided transcript, generate three sections: **Intro**, **Direct Quotes**, and **Next Actions**.
+
+---
+
+### **Section 1: Intro**
+
+**Task**: Provide a concise summary of the meeting's purpose, main topics discussed, and any relevant context. This should set the stage for someone who hasn't read the transcript. If there was a main conclusion or central theme to the meeting, state it here. This section should be no more than 3 sentences.
+
+**Criteria for Creating the Intro**:
+
+1. **Identify High-Impact Topics**:
+
+   - **Review the Transcript**: Carefully read through the entire transcript to understand the breadth and depth of the discussion.
+   - **Highlight Key Themes**: Pinpoint the most significant topics that had the most impact on the meeting’s objectives.
+   - **Quantity Rule**:
+     - If three or more high-impact topics are identified: Highlight the top three.
+     - If fewer than three high-impact topics are present: Include all available high-impact topics.
+     - If more than three high-impact topics are discussed and it is absolutely necessary to list more: Indicate that additional topics are being included as an edge case.
+
+2. **Summarize Core Objectives**:
+
+   - **Purpose of the Meeting**: Clearly state the main goal of the meeting.
+   - **Main Discussions**: Outline the primary discussions and their relevance to the overall goals.
+   - **Relevant Context**: Include any pertinent background information, such as partnerships with key companies and strategic priorities.
+
+3. **Ensure Conciseness and Clarity**:
+
+   - **Limit to Three Sentences**: Ensure the summary is brief yet comprehensive, capturing all essential elements without unnecessary details.
+   - **Clear Language**: Use straightforward language to make the summary easily understandable for someone unfamiliar with the transcript.
+
+**Maintain Proper Formatting**:
+
+- **Section Heading**: Begin with the heading "Intro."
+- **Single Paragraph**: Present the summary in a single, coherent paragraph under the heading.
+
+**Example Format**:
+
+```
+## Intro
+The meeting at Rainsound.ai was focused on discussing ongoing projects, particularly the development of automated tools and strategies for efficiently summarizing various types of media content through AI agents. The team emphasized the need to prioritize and act swiftly on conference participation and scheduling to maintain key client relationships, with particular attention to partnerships with companies like Microsoft. Additionally, the dialogue highlighted the importance of aligning skill development frameworks for AI engineers and evolving their internal systems to accommodate upcoming projects and client demands.
+```
+
+---
+
+### **Section 2: Direct Quotes**
+
+**Task**: Extract up to three impactful and relevant direct quotes from the provided transcript.
+
+**Criteria for Selecting Quotes**:
+
+- **Relevance to Problem-Solving**: Choose quotes that shed light on the issues or challenges the meeting is addressing.
+- **High Impact**: Select quotes that have significant weight or importance in the context of the discussion.
+- **Clarity and Brevity**: Ensure the quotes are clear, concise, and effectively convey the speaker's intent without ambiguity.
+
+**Filtering Guidelines**:
+
+- **Avoid Repetitive Statements**: Each quote should offer a unique insight or perspective.
+- **Quote Accuracy**: All quotes must be verbatim from the transcript.
+
+**Important Instructions**:
+
+- **Exclusive Source**: Only extract quotes from the transcript provided below. Do not reference or include any part of these instructions in your output.
+- **No Speaker Attribution**: Do not associate quotes with any speakers. Present quotes without attributing them to individuals.
+
+**Formatting Requirements**:
+
+- **Section Heading**: Begin with the heading "Direct Quotes."
+
+- **Quote Presentation**: For each quote, present the exact quote within quotation marks using the following format:
+
+  ```
+  "Exact quote here."
+  ```
+
+- **Quantity**:
+
+  - **Standard Case**: Provide up to three high-impact quotes.
+  - **Edge Case**: If more than three high-impact quotes are necessary to capture the meeting's essence, include additional quotes as needed.
+  - **Character Limit**: Ensure the entire section does not exceed 2000 characters.
+
+**Example Format**:
+
+```
+## Direct Quotes
+"It solves aligning on the skills that we need to have to be good AI engineers. It solves giving concrete solutions to known problems rather than having to reinvent the wheel for any given AI agent, and it gives concrete resources for upskilling, like, all the way to the highest level without having to sort of, like, meander your way to it."
+"I’m thinking I probably want to clone your code base and start working from there, but I think there’s some strategy involved with the right timing for that."
+"This is legit a case in which you could build a spawning agent and have it work well."
+```
+
+If no relevant quotes are identified, state:
+
+```
+## Direct Quotes
+**No relevant quotes identified.**
+```
+
+---
+
+### **Section 3: Next Actions**
+
+**Task**: Identify and outline the actionable items or decisions made during the meeting.
+
+**Include**:
+
+- **Action Items**: Clearly defined tasks or decisions derived directly from the transcript.
+
+**Criteria for Selecting Action Items**:
+
+- **Direct Extraction**: Only include actions explicitly mentioned in the transcript. Do not infer or add tasks that are not present in the meeting.
+- **Impact**: Select items that have the highest potential to affect the outcome of the project or business goals.
+- **Urgency**: Prioritize tasks that have the nearest deadlines or require immediate attention.
+- **Clarity and Feasibility**: Focus on actions that are clearly defined and achievable, avoiding ambiguous or non-actionable points.
+
+**Filtering Guidelines**:
+
+- **Avoid Hallucinations**: Do not attribute tasks to individuals unless the transcript explicitly assigns them. If the responsible party is not clearly stated, omit assigning the task.
+- **No Extraneous Tasks**: Ensure that all action items are directly pulled from the transcript without introducing any unrelated or speculative tasks.
+
+**Quantity Rule**:
+
+- **Standard Case**: Present up to three high-impact action items.
+- **Edge Case**: If more than three high-impact action items are necessary to capture the meeting's essence, include additional actions judiciously while noting it as an edge case.
+
+**Handling Insufficient Action Items**:
+
+- If there are fewer than three high-impact next actions, present only the available actions.
+- If no actionable items are identified, state "**No next actions identified.**"
+
+**Formatting Requirements**:
+
+- **Section Heading**: Begin with the heading "Next Actions."
+
+- **Action Items Presentation**: For each action item, present it in bold, followed by a concise description using the following format:
+
+  ```
+  ## Next Actions
+
+  **Action Item Title**
+  Concise description of the action item, including any relevant details such as deadlines, responsible parties (if explicitly mentioned), and follow-up steps.
+  ```
+
+- **Character Limit**: Ensure the entire section does not exceed 2000 characters.
+
+**Example Format**:
+
+```
+## Next Actions
+
+**Conference Scheduling and Ticket Purchasing**
+Immediately confirm dates for upcoming conferences, particularly focusing on those scheduled for February. Expedite the ticket purchasing process to ensure participation in key events, addressing previous delays experienced in July’s Microsoft Ignite prioritization. Follow-up actions involve notifying Brent and Jeffrey about finalized dates and ensuring alignment with sales strategy goals.
+
+**AI Skill Tree Development**
+Luca is to begin the creation of an AI skill tree, starting with five levels of AI engineering. This initiative aims to align and enhance the skills necessary for AI engineering and provide concrete solutions for upskilling. Follow-up actions include collaborating with team members to gather necessary resources and moving forward with a detailed action plan for the skill tree.
+
+**Link Processing Agent Development**
+Begin the development of a link processing agent capable of generating bulk summaries for content types such as articles and YouTube videos. The next step is to determine the optimal timing for cloning the code base from existing automated meeting engines and implement necessary adjustments to include various media. Follow-up actions include discussing reusable code components with team members and potentially integrating Notion database features for streamlined operations.
+```
+
+If no action items are identified, state:
+
+```
+## Next Actions
+**No next actions identified.**
+```
+
+---
+
+**Important Instructions**:
+
+- **Exclusive Source**: Only use the information from the provided transcript. Do not include or reference any part of these instructions in your output.
+- **Maintain Formatting**: Ensure that all sections are properly formatted as per the guidelines.
+- **Character Limits**: Adhere to the character limits specified for the "Direct Quotes" and "Next Actions" sections.
+- **No Speaker Attribution**: Do not attribute any statements or action items to specific individuals unless explicitly mentioned in the transcript.

@@ -154,13 +154,16 @@ async def safe_append_blocks_to_notion(toggle_id: str, blocks: List[NotionBlock]
 
 
 async def append_summary_to_notion(toggle_id: str, section_content: str) -> None:
-    blocks: List[NotionBlock] = convert_content_to_blocks(section_content)
+    # First chunk the content
+    content_chunks = chunk_text_with_2000_char_limit_for_notion(section_content)
     try:
-        await safe_append_blocks_to_notion(toggle_id, blocks)
+        for chunk in content_chunks:
+            blocks: List[NotionBlock] = convert_content_to_blocks(chunk)
+            await safe_append_blocks_to_notion(toggle_id, blocks)
     except Exception as e:
         logger.error(f"🚨 Failed to append summary to Notion: {str(e)}")
         logger.error(f"Toggle ID: {toggle_id}")
-        logger.error(f"Blocks count: {len(blocks)}")
+        logger.error(f"Content length: {len(section_content)}")
         raise HTTPException(
             status_code=500, 
             detail=f"Failed to append summary to Notion: {str(e)}"
@@ -363,3 +366,52 @@ async def update_notion_title_for_summarized_item(page_id, llm_conversation_file
                 logger.error(f"Notion API Error: {response.status}")
                 logger.error(f"Response body: {text}")
             # await response.raise_for_status()
+
+async def upload_summaries_and_transcript_to_notion(
+    page_id: str,
+    transcription: str,
+    summary: str,
+    evaluation: dict,
+    transcript_toggle_id: str,
+    summary_toggle_id: str,
+    user_summaries: dict
+) -> None:
+    """Upload multiple summaries and transcript to Notion"""
+    
+    blocks = []
+    
+    # Add each user's summary with their name as header
+    for user, summary in user_summaries.items():
+        blocks.extend([
+            {
+                "type": "heading_2",
+                "heading_2": {
+                    "rich_text": [{"type": "text", "text": {"content": f"{user.title()} Summary"}}]
+                }
+            },
+            {
+                "type": "paragraph",
+                "paragraph": {
+                    "rich_text": parse_rich_text(summary)
+                }
+            }
+        ])
+    
+    # Add transcript
+    blocks.extend([
+        {
+            "type": "heading_2",
+            "heading_2": {
+                "rich_text": [{"type": "text", "text": {"content": "Transcript"}}]
+            }
+        },
+        {
+            "type": "paragraph",
+            "paragraph": {
+                "rich_text": parse_rich_text(transcription)
+            }
+        }
+    ])
+    
+    # Upload to Notion
+    await safe_append_blocks_to_notion(page_id, blocks)

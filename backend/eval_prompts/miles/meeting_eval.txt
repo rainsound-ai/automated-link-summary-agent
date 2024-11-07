@@ -1,0 +1,184 @@
+Certainly! Here's the updated prompt matching how the old eval agent prompt is handling feedback:
+
+---
+
+**Evaluation Agent Prompt**
+
+**Task:**
+
+Evaluate the following summary of a meeting transcript by assessing its adherence to the extraction, selection, and formatting guidelines based on the instructions provided to the **Summary Agent**.
+
+**Inputs:**
+
+- **Original Transcript:**
+
+BEGINNING OF ORIGINAL TRANSCRIPT
+```
+{original_transcript}
+```
+END OF ORIGINAL TRANSCRIPT
+
+- **Summary to Evaluate:**
+
+BEGINNING OF SUMMARY TO EVALUATE
+```
+{summary_to_evaluate}
+```
+END OF SUMMARY TO EVALUATE
+
+---
+
+**Instructions:**
+
+### 1. Understand the Content:
+
+- **Thorough Review:**
+  - Carefully read the entire **Original Transcript** to fully grasp the key information, topics, and context discussed during the meeting.
+
+### 2. Evaluate the Summary:
+
+- **Alignment with Instructions:**
+  - Assess how well the **Summary to Evaluate** aligns with the **Summary Agent's** instructions.
+  - Focus on the accurate extraction of information, proper formatting, and adherence to the criteria specified for each section: **Intro**, **Direct Quotes**, and **Next Actions**.
+  - Base your evaluation solely on the **Original Transcript** and the **Summary to Evaluate**. Do not reference or include any part of these instructions in your evaluation.
+
+### 3. Scoring Criteria:
+
+Evaluate the summary based on the following eleven criteria. For each criterion, determine whether the summary meets the standard (**Yes**) or does not (**No**). Provide specific comments to justify your assessment.
+
+1. **Section Heading and Formatting for "Intro":**
+   - **Criteria:**
+     - The summary begins with the heading "Intro."
+     - The "Intro" is presented as a single paragraph under the heading.
+   - **Assessment:** Is the "Intro" section properly formatted with the correct heading and paragraph structure?
+   - **Comment:**
+
+2. **Conciseness and Clarity of "Intro":**
+   - **Criteria:**
+     - The "Intro" section is no more than three sentences.
+     - The language is clear and easily understandable for someone unfamiliar with the transcript.
+   - **Assessment:** Is the "Intro" concise and clear?
+   - **Comment:**
+
+3. **Inclusion of Meeting Purpose in "Intro":**
+   - **Criteria:**
+     - The main goal or purpose of the meeting is clearly stated in the "Intro."
+   - **Assessment:** Does the "Intro" include the meeting's purpose?
+   - **Comment:**
+
+4. **Highlighting High-Impact Topics in "Intro":**
+   - **Criteria:**
+     - Up to three high-impact topics are identified and summarized.
+     - If more than three topics are included, it's noted as an edge case.
+   - **Assessment:** Are the high-impact topics appropriately highlighted?
+   - **Comment:**
+
+5. **Inclusion of Relevant Context in "Intro":**
+   - **Criteria:**
+     - The "Intro" includes pertinent background information, such as partnerships or strategic priorities.
+   - **Assessment:** Does the "Intro" provide relevant context?
+   - **Comment:**
+
+6. **Section Heading and Formatting for "Direct Quotes":**
+   - **Criteria:**
+     - The summary includes the heading "Direct Quotes."
+     - Each quote is presented within quotation marks without speaker attribution.
+   - **Assessment:** Is the "Direct Quotes" section properly formatted?
+   - **Comment:**
+
+7. **Selection of High-Impact Direct Quotes:**
+   - **Criteria:**
+     - Up to three impactful and relevant quotes are extracted verbatim from the transcript.
+     - Quotes offer unique insights and are not repetitive.
+     - If no relevant quotes are identified, the section states "**No relevant quotes identified.**"
+   - **Assessment:** Are the selected quotes appropriate and correctly presented?
+   - **Comment:**
+
+8. **Section Heading and Formatting for "Next Actions":**
+   - **Criteria:**
+     - The summary includes the heading "Next Actions."
+     - Each action item is presented in bold as a title, followed by a concise description.
+   - **Assessment:** Is the "Next Actions" section properly formatted?
+   - **Comment:**
+
+9. **Identification of Action Items:**
+   - **Criteria:**
+     - Action items are directly extracted from the transcript without inference.
+     - Up to three high-impact actions are included.
+     - If no actions are identified, the section states "**No next actions identified.**"
+   - **Assessment:** Are the action items accurately identified and described?
+   - **Comment:**
+
+10. **Exclusion of Disallowed Content:**
+    - **Criteria:**
+      - The summary avoids hallucinations and does not include tasks not present in the transcript.
+      - No speaker attribution is made unless explicitly mentioned.
+    - **Assessment:** Is the summary free from disallowed content?
+    - **Comment:**
+
+11. **Adherence to Character Limits:**
+    - **Criteria:**
+      - The "Direct Quotes" and "Next Actions" sections do not exceed 2000 characters each.
+    - **Assessment:** Are the character limits respected?
+    - **Comment:**
+
+### 4. Scoring Framework:
+
+- **Score Calculation:**
+  - Each criterion is worth up to **1 point**.
+  - **Total Possible Score:** 11 points.
+  - **Final Score:** Sum of points awarded divided by 11, resulting in a score between 0 and 1, rounded to two decimal places.
+
+- **Example:**
+  - If a summary meets 9 out of the 11 criteria, the score would be **9/11 ≈ 0.82**.
+
+### 5. Provide Your Evaluation in the Following Format:
+
+```
+Score: [A single number between 0 and 1, rounded to two decimal places]
+Feedback:
+1. **Section Heading and Formatting for "Intro":** [Yes/No] - [Comment]
+2. **Conciseness and Clarity of "Intro":** [Yes/No] - [Comment]
+3. **Inclusion of Meeting Purpose in "Intro":** [Yes/No] - [Comment]
+4. **Highlighting High-Impact Topics in "Intro":** [Yes/No] - [Comment]
+5. **Inclusion of Relevant Context in "Intro":** [Yes/No] - [Comment]
+6. **Section Heading and Formatting for "Direct Quotes":** [Yes/No] - [Comment]
+7. **Selection of High-Impact Direct Quotes:** [Yes/No] - [Comment]
+8. **Section Heading and Formatting for "Next Actions":** [Yes/No] - [Comment]
+9. **Identification of Action Items:** [Yes/No] - [Comment]
+10. **Exclusion of Disallowed Content:** [Yes/No] - [Comment]
+11. **Adherence to Character Limits:** [Yes/No] - [Comment]
+```
+
+---
+
+**Important Instructions:**
+
+- **Exclusive Source:**
+  - Only use information from the **Original Transcript** and the **Summary to Evaluate**.
+  - Do not reference or include any part of these instructions in your evaluation.
+
+- **Accuracy:**
+  - Do not include any information not present in the transcript.
+  - Avoid paraphrasing or interpreting the content beyond assessing adherence to the guidelines.
+
+- **Handling of Quotes:**
+  - Quotes must be verbatim from the transcript.
+  - Do not alter the meaning or intent of the quotes.
+
+- **Format Adherence:**
+  - Strictly assess whether the summary follows the specified formatting with correct headings and structures.
+  - Ensure sections are presented in the correct order and format.
+
+- **Avoid Hallucinations:**
+  - Do not consider any tasks or content that are not explicitly mentioned in the transcript.
+
+- **Conciseness:**
+  - Keep feedback concise to ensure it is easily digestible.
+
+- **Completeness:**
+  - Ensure all relevant aspects from the transcript are considered in the evaluation without omitting key points.
+
+- **Clarity:**
+  - Write your feedback in clear, precise language suitable for an expert audience.
+  - Use technical terms appropriately without overusing jargon.

@@ -4,14 +4,11 @@ import traceback
 import logging
 from contextlib import asynccontextmanager
 from typing import Dict
-# from tenacity import retry, stop_after_attempt, wait_exponential, RetryError
 
 from app.services.summarize import decomposed_summarize_transcription_and_upload_to_notion  
 from app.services.llm_conversation_handler import handle_llm_conversation
 from app.services.html_docx_or_pdf_handler import handle_html_docx_or_pdf
-from app.services.youtube_handler import (
-    handle_youtube_videos
-)
+from app.services.youtube_handler import handle_youtube_videos
 from app.helpers.youtube_helpers import contains_the_string_youtube
 from app.helpers.llm_conversation_helper import link_is_none_and_therefore_this_must_be_an_llm_conversation_html_file
 from app.helpers.jumpshare_helper import link_is_jumpshare_link
@@ -55,7 +52,6 @@ async def meeting_processing_context(meeting):
     finally:
         logger.debug("Exiting context manager")
 
-# @retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, min=4, max=10))
 async def process_link(item_to_process):
     async with meeting_processing_context(item_to_process):
         try: 
@@ -68,8 +64,8 @@ async def process_link(item_to_process):
             link_or_meeting_database = None
             llm_conversation_file_name = None
             is_jumpshare_link = False
-            links_from_notion = None  # Initialize here
-            transcription = None  # Initialize here
+            links_from_notion = None
+            transcription = None
 
             # Build the link to summarize depending on media type
             if properties.get('Link', {}).get('url'):
@@ -88,7 +84,6 @@ async def process_link(item_to_process):
                 link_or_meeting_database = 'meeting_database'
                 is_jumpshare_link = True
 
-            # Add this after the is_jumpshare_link initialization
             has_audio_files = any(
                 f.get('name', '').lower().startswith(('call_', 'call with')) 
                 for f in properties.get('Jumpshare Links', {}).get('files', [])
@@ -127,16 +122,6 @@ async def process_link(item_to_process):
                     raise ValueError("No valid Jumpshare links or audio files found")
             elif link_or_meeting_database == 'link_database' and not is_llm_conversation: 
                 transcription = await handle_html_docx_or_pdf(links_from_notion)
-            elif has_audio_files:
-                logger.info("🚨 Processing Slack audio file(s)")
-                audio_files = [
-                    f for f in links_from_notion 
-                    if f.get('url') and (
-                        f['name'].lower().startswith('call_') or 
-                        f['name'].lower().startswith('call with')
-                    )
-                ]
-                transcription = await handle_slack_audio_files(audio_files)
             else:
                 logger.error(f"No valid audio files or Jumpshare links found in: {links_from_notion}")
                 raise ValueError("No valid audio files or Jumpshare links found")
@@ -145,13 +130,11 @@ async def process_link(item_to_process):
                 raise ValueError("Failed to generate transcription")
 
             logger.debug("Creating toggle blocks")
-            # Only create transcript toggle
             transcript_toggle_id = await create_toggle_block(page_id, "Transcript", "orange")
             if not transcript_toggle_id:
                 raise ValueError("Failed to create transcript toggle block")
 
             logger.debug("Uploading summary and transcript to Notion")
-            # Pass the created toggle IDs to the respective functions
             await decomposed_summarize_transcription_and_upload_to_notion(
                 page_id, 
                 transcription, 
@@ -161,7 +144,6 @@ async def process_link(item_to_process):
                 is_jumpshare_link, 
                 llm_conversation_file_name
             )
-            # Add this line back
             await upload_transcript_to_notion(transcript_toggle_id, transcription)
             
             logger.debug("Successfully completed processing")
@@ -174,6 +156,9 @@ async def process_link(item_to_process):
 @api_router.post("/update_notion_with_transcript_and_summary")
 async def update_notion_with_transcript_and_summary() -> Dict[str, str]:
     logger.info("Received request for updating Notion with transcript and summary.")
+    successful_items = []
+    failed_items = []
+    
     try:
         links_to_summarize = await get_unsummarized_links_from_notion()
         meetings_to_summarize = await get_unsummarized_meetings_from_notion()
@@ -182,14 +167,67 @@ async def update_notion_with_transcript_and_summary() -> Dict[str, str]:
 
         for item in items_to_summarize:
             try:
+                properties = item.get('properties', {})
+                
+                # Get link details
+                link_info = ""
+                if properties.get('Link', {}).get('url'):
+                    link_info = f"URL: {properties['Link']['url']}"
+                elif properties.get('LLM Conversation', {}).get('files'):
+                    link_info = "LLM Conversation File"
+                elif properties.get('Jumpshare Links', {}).get('files'):
+                    files = properties['Jumpshare Links']['files']
+                    link_info = f"Files: {', '.join(f['name'] for f in files)}"
+
+                # Get title or link as fallback
+                title = (
+                    properties.get('Name', {}).get('title', [{}])[0].get('plain_text') or 
+                    properties.get('Link', {}).get('url') or 
+                    "Untitled"
+                )
+
                 await process_link(item)
+                successful_items.append({
+                    'id': item['id'],
+                    'title': title,
+                    'link_info': link_info
+                })
                 logger.info(f"✅ Successfully processed meeting {item['id']}")
-            # except RetryError as e:
-            #     logger.error(f"🚨 Failed to process meeting {link['id']} after all retry attempts: {str(e)}")
+                
             except Exception as e:
+                failed_items.append({
+                    'id': item['id'],
+                    'title': title,
+                    'link_info': link_info,
+                    'error': str(e)
+                })
                 logger.error(f"🚨 Unexpected error processing meeting {item['id']}: {str(e)}")
 
-        return {"message": "Processing completed"}
+        # Add summary logging
+        logger.info("\n=== Summary of Processing ===")
+        if successful_items:
+            logger.info("\n✅ Successfully Processed:")
+            for item in successful_items:
+                logger.info(f"- {item['title']}")
+                logger.info(f"  {item['link_info']}")
+                logger.info(f"  [ID: {item['id']}]\n")
+        
+        if failed_items:
+            logger.info("\n❌ Failed to Process:")
+            for item in failed_items:
+                logger.info(f"- {item['title']}")
+                logger.info(f"  {item['link_info']}")
+                logger.info(f"  [ID: {item['id']}]")
+                logger.info(f"  Error: {item['error']}\n")
+        
+        logger.info(f"\nTotal: {len(successful_items)} succeeded, {len(failed_items)} failed")
+        logger.info("===========================\n")
+
+        return {
+            "message": "Processing completed",
+            "successful": len(successful_items),
+            "failed": len(failed_items)
+        }
     
     except Exception as e:
         logger.error(f"🚨 Error in update_notion_with_transcript_and_summary: {str(e)}")

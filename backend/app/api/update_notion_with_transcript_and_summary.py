@@ -25,6 +25,7 @@ from app.services.notion import (
     create_toggle_block
 )
 from app.services.jumpshare_handler import handle_jumpshare_videos
+from app.services.slack_handler import handle_slack_audio_files
 
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../'))
 api_router = APIRouter()
@@ -87,6 +88,12 @@ async def process_link(item_to_process):
                 link_or_meeting_database = 'meeting_database'
                 is_jumpshare_link = True
 
+            # Add this after the is_jumpshare_link initialization
+            has_audio_files = any(
+                f.get('name', '').lower().startswith(('call_', 'call with')) 
+                for f in properties.get('Jumpshare Links', {}).get('files', [])
+            ) if properties.get('Jumpshare Links', {}).get('files') else False
+
             if not links_from_notion:
                 raise ValueError("No valid links found in the item")
 
@@ -96,11 +103,43 @@ async def process_link(item_to_process):
                 transcription = await handle_youtube_videos(links_from_notion)
             elif is_llm_conversation:
                 transcription, llm_conversation_file_name = await handle_llm_conversation(item_to_process)
-            elif link_is_jumpshare_link(links_from_notion[0]):
-                logger.info("🚨 Processing Jumpshare link")
-                transcription = await handle_jumpshare_videos(links_from_notion)
+            elif is_jumpshare_link:
+                logger.info("🚨 Processing files from meeting database")
+                files = properties.get('Jumpshare Links', {}).get('files', [])
+                
+                # Check for Jumpshare videos
+                jumpshare_links = [
+                    f['name'] for f in files 
+                    if 'jmp.sh' in f['name'] or 'jumpshare' in f['name']
+                ]
+                
+                # Check for audio files
+                audio_files = [
+                    f for f in files 
+                    if f.get('name', '').lower().startswith(('call_', 'call with'))
+                ]
+                
+                if jumpshare_links:
+                    transcription = await handle_jumpshare_videos(jumpshare_links)
+                elif audio_files:
+                    transcription = await handle_slack_audio_files(audio_files)
+                else:
+                    raise ValueError("No valid Jumpshare links or audio files found")
             elif link_or_meeting_database == 'link_database' and not is_llm_conversation: 
                 transcription = await handle_html_docx_or_pdf(links_from_notion)
+            elif has_audio_files:
+                logger.info("🚨 Processing Slack audio file(s)")
+                audio_files = [
+                    f for f in links_from_notion 
+                    if f.get('url') and (
+                        f['name'].lower().startswith('call_') or 
+                        f['name'].lower().startswith('call with')
+                    )
+                ]
+                transcription = await handle_slack_audio_files(audio_files)
+            else:
+                logger.error(f"No valid audio files or Jumpshare links found in: {links_from_notion}")
+                raise ValueError("No valid audio files or Jumpshare links found")
 
             if not transcription:
                 raise ValueError("Failed to generate transcription")

@@ -1,0 +1,15 @@
+services:
+  backend:
+    image: iandoesallthethings/rainsound:automated-link-summary-agent-backend
+    build:
+      context: .
+      dockerfile: Dockerfile
+      platforms:
+        - linux/amd64
+        - linux/arm64
+    ports:
+      - '8000:8000'
+    env_file:
+      - backend/.env
+
+    command: ['poetry', 'run', 'python', 'main.py']

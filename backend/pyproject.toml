@@ -4,13 +4,15 @@ version = "0.1.0"
 description = ""
 authors = ["rainsound.ai <hello@rainsound.ai>"]
 readme = "README.md"
+package-mode = false
+
 [tool.poetry.dependencies]
 python = "^3.11"
-fastapi = "^0.110.1"
+fastapi = "^0.115.4"
 python-dotenv = "^1.0.1"
 pydantic = "^2.7.0"
-pre-commit = "^3.7.0"
-openai = "^1.50.2"
+pre-commit = "^4.0.1"
+openai = "^1.54.2"
 requests = "^2.32.3"
 aiofiles = "^24.1.0"
 tenacity = "^9.0.0"
@@ -19,9 +21,12 @@ pytubefix = "^8.1.1"
 beautifulsoup4 = "^4.12.3"
 pypdf2 = "^3.0.1"
 python-docx = "^1.1.2"
-numpy= "<2.0"
+numpy = "<2.1.3"
 httpx = "^0.27.2"
 aiohttp = "^3.10.10"
+deepmultilingualpunctuation = "^1.0.1"
+nltk = "^3.9.1"
+schedule = "^1.2.2"
 
 [tool.poetry.dependencies.uvicorn]
 extras = ["standard"]
@@ -30,3 +35,6 @@ version = "^0.29.0"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+dev = "python main.py"

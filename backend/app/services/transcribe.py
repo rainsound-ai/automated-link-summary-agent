@@ -192,7 +192,3 @@ async def transcribe(file: UploadFile = File(...)) -> str:
     except Exception as e:
         logger.error(f"🚨 Error in transcription process: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
-    finally:
-        if "temp_path" in locals():
-            os.unlink(temp_path)
-            logger.info("Temporary file cleaned up.")

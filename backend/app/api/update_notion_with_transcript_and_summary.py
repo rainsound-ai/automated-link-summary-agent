@@ -138,7 +138,9 @@ async def process_link(item_to_process):
                 audio_files = [
                     f
                     for f in files
-                    if f.get("name", "").lower().startswith(("call_", "call with"))
+                    if f.get("name", "")
+                    .lower()
+                    .startswith(("call_", "call with", "test"))
                 ]
 
                 if jumpshare_links:
@@ -197,6 +199,7 @@ async def update_notion_with_transcript_and_summary() -> Dict[str, str]:
 
     try:
         links_to_summarize = await get_unsummarized_links_from_notion()
+        # links_to_summarize = []
         meetings_to_summarize = await get_unsummarized_meetings_from_notion()
         items_to_summarize = links_to_summarize + meetings_to_summarize
         logger.info(f"💡 Found {len(items_to_summarize)} links to summarize.")

@@ -4,6 +4,7 @@ version = "0.1.0"
 description = ""
 authors = ["rainsound.ai <hello@rainsound.ai>"]
 readme = "README.md"
+
 [tool.poetry.dependencies]
 python = "^3.11"
 fastapi = "^0.110.1"
@@ -19,12 +20,13 @@ pytubefix = "^8.1.1"
 beautifulsoup4 = "^4.12.3"
 pypdf2 = "^3.0.1"
 python-docx = "^1.1.2"
-numpy= "<2.0"
+numpy = "<2.0"
 httpx = "^0.27.2"
 aiohttp = "^3.10.10"
 deepmultilingualpunctuation = "^1.0.1"
 nltk = "^3.9.1"
 slack-sdk = "^3.33.5"
+memory-profiler = "^0.61.0"
 
 [tool.poetry.dependencies.uvicorn]
 extras = ["standard"]

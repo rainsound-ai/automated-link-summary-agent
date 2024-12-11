@@ -171,23 +171,23 @@ async def transcribe_stream(
 
 async def transcribe(file: UploadFile = File(...)) -> str:
     try:
-        with tempfile.NamedTemporaryFile(
-            delete=False, suffix=os.path.splitext(file.filename)[1]
-        ) as temp_file:
+        suffix = os.path.splitext(file.filename)[1]
+        with tempfile.NamedTemporaryFile(suffix=suffix) as temp_file:
             temp_path = temp_file.name
             async with aiofiles.open(temp_path, "wb") as buffer:
                 while content := await file.read(1024 * 1024):  # Read in 1MB chunks
                     await buffer.write(content)
             logger.info(f"💡 File {file.filename} saved to {temp_path}.")
 
-        audio_stream = extract_audio_stream(temp_path)
-        transcription_stream = transcribe_stream(audio_stream)
+            await file.close()  # We're done with that copy now
+            audio_stream = extract_audio_stream(temp_path)
+            transcription_stream = transcribe_stream(audio_stream)
 
-        full_transcription = []
-        async for transcription_part in transcription_stream:
-            full_transcription.append(transcription_part)
+            full_transcription = []
+            async for transcription_part in transcription_stream:
+                full_transcription.append(transcription_part)
 
-        return " ".join(full_transcription)
+            return " ".join(full_transcription)
 
     except Exception as e:
         logger.error(f"🚨 Error in transcription process: {str(e)}")

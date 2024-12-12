@@ -198,8 +198,8 @@ async def update_notion_with_transcript_and_summary() -> Dict[str, str]:
     failed_items = []
 
     try:
-        links_to_summarize = await get_unsummarized_links_from_notion()
         # links_to_summarize = []
+        links_to_summarize = await get_unsummarized_links_from_notion()
         meetings_to_summarize = await get_unsummarized_meetings_from_notion()
         items_to_summarize = links_to_summarize + meetings_to_summarize
         logger.info(f"💡 Found {len(items_to_summarize)} links to summarize.")
